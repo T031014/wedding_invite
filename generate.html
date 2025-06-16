@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>阿豪婚姻顧問公司</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Serif TC', serif;
+      background-color: #FAF3E0;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #F5EBDD;
+      padding: 2rem 1rem;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+    }
+    .content {
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+      background-color: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+      align-items: center;
+    }
+    input[type="text"], input[type="number"], input[type="email"] {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 80%;
+      max-width: 400px;
+      font-size: 1rem;
+    }
+    .cta {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+    .cta button, .cta a.back-home {
+      background-color: #E6D3B3;
+      border: none;
+      color: #4A4A4A;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+    .cta button:hover, .cta a.back-home:hover {
+      background-color: #d4bfa3;
+    }
+    footer {
+      background-color: #F5EBDD;
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 4rem;
+      font-size: 0.9rem;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <header><h1>阿豪婚姻顧問公司</h1></header>
+  <div class="content">
+    <form id="weddingForm">
+      <input type="text" name="groom" placeholder="男方姓名" required>
+      <input type="email" name="groom_email" placeholder="男方郵箱" required>
+      <input type="text" name="groom_phone" placeholder="男方電話" required>
+      <input type="text" name="bride" placeholder="女方姓名" required>
+      <input type="email" name="bride_email" placeholder="女方郵箱" required>
+      <input type="text" name="bride_phone" placeholder="女方電話" required>
+      <input type="number" id="recipientCount" placeholder="寄送對象人數" min="1" required onchange="generateRecipientFields()">
+      <div id="recipientContainer"></div>
+
+      <div class="cta">
+        <button type="button" onclick="showTemplateOptions()">產生專屬邀請函</button>
+        <a class="back-home" href="index.html">返回首頁</a>
+      </div>
+
+      <div id="templateOptions" style="display: none; margin-top: 2rem;">
+        <h3>選擇邀請函款式</h3>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <label><input type="radio" name="template" value="classic" onchange="updatePreview()" required> 經典風格</label>
+          <label><input type="radio" name="template" value="modern" onchange="updatePreview()"> 現代簡約</label>
+          <label><input type="radio" name="template" value="romantic" onchange="updatePreview()"> 浪漫花園</label>
+          <label><input type="radio" name="template" value="boho" onchange="updatePreview()"> 波西米亞風</label>
+        </div>
+        <div id="templatePreview" style="margin-top: 1.5rem;"></div>
+      </div>
+
+      <div class="cta">
+        <button type="submit">確認並送出</button>
+        <a class="back-home" href="index.html">返回首頁</a>
+      </div>
+    </form>
+  </div>
+  <footer>
+    <p>&copy; 2025 阿豪婚姻顧問公司．愛與科技的完美結合</p>
+  </footer>
+  <script>
+    function generateRecipientFields() {
+      const container = document.getElementById('recipientContainer');
+      const count = parseInt(document.getElementById('recipientCount').value);
+      container.innerHTML = '';
+      for (let i = 1; i <= count; i++) {
+        container.innerHTML += `
+          <input type="text" name="recipient${i}" placeholder="寄送對象 ${i} 姓名" required>
+          <input type="email" name="email${i}" placeholder="寄送對象 ${i} 郵箱" required>
+          <input type="text" name="phone${i}" placeholder="寄送對象 ${i} 電話" required>
+        `;
+      }
+    }
+    function showTemplateOptions() {
+      document.getElementById('templateOptions').style.display = 'block';
+    }
+    function updatePreview() {
+      const selected = document.querySelector('input[name="template"]:checked');
+      const preview = document.getElementById('templatePreview');
+      if (selected) {
+        const imgSrc = `img/preview-${selected.value}.jpg`;
+        preview.innerHTML = `<img src="${imgSrc}" alt="${selected.value}" style="max-width: 100%; border-radius: 12px; box-shadow: 0 0 8px rgba(0,0,0,0.1);">`;
+      }
+    }
+    document.getElementById('weddingForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const count = parseInt(document.getElementById('recipientCount').value);
+      const data = {
+        groom_name: formData.get('groom'),
+        groom_email: formData.get('groom_email'),
+        groom_phone: formData.get('groom_phone'),
+        bride_name: formData.get('bride'),
+        bride_email: formData.get('bride_email'),
+        bride_phone: formData.get('bride_phone'),
+        template: formData.get('template'),
+        recipients: []
+      };
+      for (let i = 1; i <= count; i++) {
+        data.recipients.push({
+          name: formData.get('recipient' + i),
+          email: formData.get('email' + i),
+          phone: formData.get('phone' + i)
+        });
+      }
+      try {
+        const res1 = await fetch('http://127.0.0.1:8000/invitation/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (!res1.ok) {
+          const errText = await res1.text();
+          throw new Error('儲存失敗：' + errText);
+        }
+        const result1 = await res1.json();
+        alert("✅ 邀請資料已送出，n8n 已啟動寄送流程。請稍候收到信件。");
+      } catch (err) {
+        console.error("⚠️ 錯誤：", err);
+        alert(err.message || "系統錯誤，請稍後再試");
+      }
+    });
+  </script>
+</body>
+</html>
